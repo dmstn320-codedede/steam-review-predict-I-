@@ -24,7 +24,14 @@ def normalize_review_count(x):
 # 데이터 캐싱
 @st.cache_data
 def load_data():
-    return build_dataset()
+    try:
+        st.write("데이터 로딩 중...")  # 디버깅용
+        data = build_dataset()
+        st.write("데이터 로딩 완료")
+        return data
+    except Exception as e:
+        st.error(f"데이터 로드 실패: {e}")
+        return pd.DataFrame()
 
 # =====================================================
 # 게임 가격 가져오기
@@ -36,7 +43,7 @@ def get_price(appid):
     url = f"https://store.steampowered.com/api/appdetails?appids={appid}&cc=KR"
 
     try:
-        res = requests.get(url, timeout=5)
+        res = requests.get(url, timeout=3)
         data = res.json()
 
         if data[str(appid)]["success"]:
@@ -66,7 +73,7 @@ def get_live_review_score(appid):
 
         url = f"https://store.steampowered.com/appreviews/{appid}?json=1"
 
-        res = requests.get(url, timeout=5).json()
+        res = requests.get(url, timeout=3).json()
 
         summary = res.get("query_summary", {})
 
@@ -180,6 +187,10 @@ if "loading_done" not in st.session_state:
 
     # 👉 실제 데이터 로드 (여기서 시간 발생)
     merged = load_data()
+
+    if merged.empty:
+        st.error("데이터를 불러오지 못했습니다.")
+        st.stop()   
 
     # 👉 페이드 아웃 효과
     loading_placeholder.markdown(
