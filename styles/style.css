@@ -1,0 +1,100 @@
+/* =====================================================
+Steam 스타일 카드 UI
+===================================================== */
+
+.game-card {
+    border-radius: 10px;
+    padding: 12px;
+    background-color: #1b2838;
+    transition: all 0.25s ease-in-out;
+    box-shadow: 0px 2px 6px rgba(0,0,0,0.4);
+    margin-bottom: 20px;
+}
+
+.game-card:hover {
+    transform: scale(1.03);
+    box-shadow: 0px 8px 18px rgba(0,0,0,0.7);
+}
+
+.game-title {
+    font-size:18px;
+    font-weight:600;
+    margin-top:8px;
+}
+
+.game-info {
+    font-size:14px;
+    color:#c7d5e0;
+}
+
+/* =====================================================
+페이지 스타일
+===================================================== */
+
+.section-title {
+    font-size:28px;
+    font-weight:700;
+    margin-top:20px;
+}
+
+.hero-title {
+    font-size:36px;
+    font-weight:700;
+}
+
+.hero-sub {
+    font-size:16px;
+    color:#666;
+}
+
+/* =========================
+   HOME 카드 스타일
+========================= */
+
+.feature-card {
+    padding: 22px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    transition: all 0.25s ease;
+    cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.08);
+}
+
+.feature-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
+
+.card-blue {
+    background: linear-gradient(135deg,#1f3b5a,#274b73);
+}
+
+.card-red {
+    background: linear-gradient(135deg,#5a1f1f,#7a2b2b);
+}
+
+.card-green {
+    background: linear-gradient(135deg,#1f5a3a,#2e7d50);
+}
+
+.card-yellow {
+    background: linear-gradient(135deg,#5a541f,#7a722b);
+}
+
+.card-purple {
+    background: linear-gradient(135deg,#4b3a73,#5d49a8);
+}
+
+.card-cyan {
+    background: linear-gradient(135deg,#1f5a5a,#2c8f8f);
+}
+
+.card-title {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.card-desc {
+    font-size: 14px;
+    opacity: 0.8;
+}
