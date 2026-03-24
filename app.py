@@ -931,30 +931,33 @@ if page == "🔍 게임 검색":
                 st.markdown(f"[Steam 상점 바로가기]({steam_url})")
 
                 # -----------------------------
-                # 내부 데이터 점수 표시
+                # 🔥 실시간 리뷰 우선 표시
                 # -----------------------------
 
-                game_data = merged[merged["appid"] == appid]
+                live = get_live_review_score(appid)
 
-                if not game_data.empty:
-                    
-                    row = game_data.iloc[0]
+                if live:
 
-                    st.write(f"⭐ 긍정률: {round(row['positive_ratio']*100,1)}%")
-                    st.write(f"📝 리뷰 수: {row['total_review_count']:,}")
-                    st.write(f"🏆 예상 점수: {round(row['rank_score'],2)}")
+                    ratio, total, score = live
+
+                    st.write(f"⭐ 긍정률: {round(ratio*100,1)}%")
+                    st.write(f"📝 리뷰 수: {total:,}")
+                    st.write(f"🏆 예상 점수: {round(score,2)}")
 
                 else:
 
-                    live = get_live_review_score(appid)
+                    game_data = merged[merged["appid"] == appid]
 
-                    if live:
+                    if not game_data.empty:
+                        
+                        row = game_data.iloc[0]
 
-                        ratio, total, score = live
+                        st.write(f"⭐ 긍정률: {round(row['positive_ratio']*100,1)}%")
+                        st.write(f"📝 리뷰 수: {row['total_review_count']:,}")
+                        st.write(f"🏆 예상 점수: {round(row['rank_score'],2)}")
 
-                        st.write(f"⭐ 긍정률: {round(ratio*100,1)}%")
-                        st.write(f"📝 리뷰 수: {total:,}")
-                        st.write(f"🏆 예상 점수: {round(score,2)}")
+                    else:
+                        st.write("데이터 없음")
 
 # =====================================================
 # 게임 상세 페이지
