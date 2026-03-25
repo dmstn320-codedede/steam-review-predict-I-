@@ -481,13 +481,20 @@ if page == "🔥 인기 게임":
 
             st.markdown(f"[Steam 상점 바로가기]({steam_url})")
 
-            # 긍정률
-            st.write(f"⭐ 긍정 비율: {round(row.positive_ratio*100,1)}%")
+            # -------------------------
+            # 🔥 실시간 리뷰 데이터 적용
+            # -------------------------
+            live = get_live_review_score(row.appid)
 
-            # -------------------------
-            # 🔥 리뷰 수
-            # -------------------------
-            st.caption(f"📝 리뷰 {int(row.total_review_count):,}")
+            if live:
+                ratio, total, score = live
+
+                st.write(f"⭐ 긍정 비율: {round(ratio*100,1)}%")
+                st.caption(f"📝 리뷰 {total:,}")
+
+            else:
+                st.write(f"⭐ 긍정 비율: {round(row.positive_ratio*100,1)}%")
+                st.caption(f"📝 리뷰 {int(row.total_review_count):,}")
 
             # 인기 점수
             st.write(f"🏆 인기 점수: {round(row.rank_score,2)}")
@@ -871,7 +878,7 @@ if page == "🧠 취향 분석 추천":
 
                         st.write(f"⭐ 긍정률: {round(ratio*100,1)}%")
                         st.write(f"📝 리뷰 수: {total:,}")
-
+ 
                     else:
                         st.write(f"⭐ 긍정률: {round(row['positive_ratio']*100,1)}%")
                         st.write(f"📝 리뷰 수: {row['total_review_count']:,}")
