@@ -651,30 +651,43 @@ if page == "🎮 취향 기반 추천":
 
             st.subheader("🔥 이런 게임도 좋아할 수 있습니다")
 
-            for _, row in similar_games.iterrows():
+        for _, row in similar_games.iterrows():
 
-                col1, col2 = st.columns([1,3])
+            col1, col2 = st.columns([1,3])
 
-                with col1:
+            with col1:
 
-                    img = f"https://cdn.cloudflare.steamstatic.com/steam/apps/{row['appid']}/header.jpg"
-                    st.image(img, use_container_width=True)
+                img = f"https://cdn.cloudflare.steamstatic.com/steam/apps/{row['appid']}/header.jpg"
+                st.image(img, use_container_width=True)
 
-                with col2:
+            with col2:
 
-                    steam_url = f"https://store.steampowered.com/app/{row['appid']}"
+                steam_url = f"https://store.steampowered.com/app/{row['appid']}"
 
-                    st.markdown(
-                        f"### [{row['app_name']}]({steam_url})"
-                    )
+                st.markdown(
+                    f"### [{row['app_name']}]({steam_url})"
+                )
 
-                    st.write(
-                        f"⭐ 긍정률: {round(row['positive_ratio']*100,1)}%"
-                    )
+                # -----------------------------
+                # 🔥 실시간 리뷰 데이터 적용
+                # -----------------------------
+                live = get_live_review_score(row["appid"])
 
-                    st.write(
-                        f"📝 리뷰 수: {row['total_review_count']}"
-                    )
+                if live:
+                    ratio, total, score = live
+
+                    st.write(f"⭐ 긍정률: {round(ratio*100,1)}%")
+                    st.write(f"📝 리뷰 수: {total:,}")
+
+                else:
+                    st.write(f"⭐ 긍정률: {round(row['positive_ratio']*100,1)}%")
+                    st.write(f"📝 리뷰 수: {row['total_review_count']:,}")
+
+                # -----------------------------
+                # 🎯 태그 추가
+                # -----------------------------
+                if "tag_list" in row and isinstance(row["tag_list"], list):
+                    st.caption("🏷 " + ", ".join(row["tag_list"][:4]))
 
 # =====================================================
 # 취향 분석 추천
@@ -1057,4 +1070,4 @@ if st.session_state.selected_game:
         st.session_state.selected_game = None
         st.rerun()
 
-# 실행 :   
+# 실행 : streamlit run app.py
