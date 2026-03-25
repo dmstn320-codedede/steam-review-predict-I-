@@ -861,13 +861,27 @@ if page == "🧠 취향 분석 추천":
                         f"### [{row['app_name']}]({steam_url})"
                     )
 
-                    st.write(
-                        f"⭐ 긍정률: {round(row['positive_ratio']*100,1)}%"
-                    )
+                    # -----------------------------
+                    # 🔥 실시간 리뷰 데이터 적용
+                    # -----------------------------
+                    live = get_live_review_score(row["appid"])
 
-                    st.write(
-                        f"📝 리뷰 수: {row['total_review_count']}"
-                    )
+                    if live:
+                        ratio, total, score = live
+
+                        st.write(f"⭐ 긍정률: {round(ratio*100,1)}%")
+                        st.write(f"📝 리뷰 수: {total:,}")
+
+                    else:
+                        st.write(f"⭐ 긍정률: {round(row['positive_ratio']*100,1)}%")
+                        st.write(f"📝 리뷰 수: {row['total_review_count']:,}")
+
+
+                    # -----------------------------
+                    # 🎯 태그 추가
+                    # -----------------------------
+                    if "tag_list" in row and isinstance(row["tag_list"], list):
+                        st.caption("🎮 " + ", ".join(row["tag_list"][:4]))
 
                     if "reason" in row:
                         st.write(f"🎯 추천 이유: {row['reason']}")
