@@ -617,8 +617,20 @@ if page == "🎯 장르 추천":
 
                 st.markdown(f"### [{row.app_name}]({steam_url})")
 
-                st.write(f"⭐ 긍정 비율: {round(row.positive_ratio*100,1)}%")
-                st.write(f"📝 리뷰 수: {int(row.total_review_count):,}")
+            # -----------------------------
+            # 🔥 실시간 리뷰 데이터 적용
+            # -----------------------------
+            live = get_live_review_score(row["appid"])
+
+            if live:
+                ratio, total, score = live
+
+                st.write(f"⭐ 긍정 비율: {round(ratio*100,1)}%")
+                st.write(f"📝 리뷰 수: {total:,}")
+
+            else:
+                st.write(f"⭐ 긍정 비율: {round(row['positive_ratio']*100,1)}%")
+                st.write(f"📝 리뷰 수: {int(row['total_review_count']):,}")
                 st.write(f"🏆 인기 점수: {round(row.rank_score,2)}")
 
                 st.caption("🏷 " + ", ".join(row.tag_list[:3]))
