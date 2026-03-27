@@ -50,6 +50,18 @@ def load_data():
     except Exception as e:
         st.error(f"데이터 로드 실패: {e}")
         return pd.DataFrame()
+    
+# =========================
+# 이름 보정 (여기 추가)
+# =========================
+name_map = {
+    "Destiny 2": "데스티니 가디언즈 (Destiny 2)",
+    "Sekiro: Shadows Die Twice": "세키로",
+    "Elden Ring": "엘든 링",
+    "Resident Evil 4": "바이오하자드 RE4",
+    "Resident Evil 3": "바이오하자드 RE3",
+    "Resident Evil 2": "바이오하자드 RE2"
+}
 
 # =====================================================
 # 게임 가격 가져오기
@@ -682,50 +694,65 @@ if page == "🔥 인기 게임":
 if page == "💀 평이 안좋은 게임":
 
     st.divider()
-    st.header("💀 Steam에서 평이 안좋은 게임 TOP10")
+    st.header("💀 Steam에서 평이 안좋은 게임 ")
 
     worst_games = merged[
-        merged["total_review_count"] >= 500
+        (merged["total_review_count"] >= 500) &
+        (merged["positive_ratio"] < 0.6)   # 🔥 추가
     ].sort_values(
         by="positive_ratio",
         ascending=True
-    ).head(10)
+    ).head(7)
 
     for i, row in enumerate(worst_games.itertuples(), 1):
 
         col1, col2 = st.columns([1,3])
 
+        # -------------------------
+        # 이미지
+        # -------------------------
         with col1:  
 
             image_url = f"https://cdn.cloudflare.steamstatic.com/steam/apps/{row.appid}/header.jpg"
             st.image(image_url)
 
+        # -------------------------
+        # 정보 영역
+        # -------------------------
         with col2:
 
             steam_url = f"https://store.steampowered.com/app/{row.appid}"
 
             st.markdown(f"### {i}. [{row.app_name}]({steam_url})")
 
+            # -------------------------
+            # 실시간 리뷰
+            # -------------------------
             live = get_live_review_score(row.appid)
 
-            # 🔥 live 데이터 있으면 사용
             if live:
                 ratio, total = live
             else:
                 ratio = row.positive_ratio
                 total = row.total_review_count
 
-            # 🔥 row를 dict 형태로 변환 (핵심)
-            row_dict = {
-                "positive_ratio": ratio,
-                "total_review_count": total
-            }
-
-            # 🔥 점수 계산 (완전 통일)
-            score = get_display_score(row_dict, merged)
-
+            # -------------------------
+            # 출력
+            # -------------------------
             st.write(f"⭐ 긍정률: {round(ratio*100,1)}%")
             st.write(f"📝 리뷰 수: {int(total):,}")
+
+            # -------------------------
+            # 상태 표시 (🔥 핵심)
+            # -------------------------
+            if ratio < 0.3:
+                st.error("💀 매우 부정적")
+            elif ratio < 0.5:
+                st.warning("⚠️ 대체로 부정적")
+            else:
+                st.write("😐 복합적 평가")
+
+
 
 # =====================================================
 # 장르 추천
@@ -1185,7 +1212,13 @@ if page == "🔍 게임 검색":
                     ratio, total = live
 
                     # 🔥 점수 보정 (핵심)
-                    score = get_display_score(row, merged)
+                    game_data = merged[merged["appid"] == appid]
+
+                    if not game_data.empty:
+
+                        row = game_data.iloc[0]
+
+                        score = get_display_score(row, merged)
 
                     st.write(f"⭐ 긍정률: {round(ratio*100,1)}%")
                     st.write(f"📝 리뷰 수: {total:,}")
